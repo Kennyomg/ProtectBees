@@ -5,6 +5,7 @@
 
 MainMenu::MenuResult MainMenu::show(sf::RenderWindow& window) {
 	sf::Font font;
+	// Load font
 	font.loadFromFile("Resources/Fonts/Camouflage.ttf");
 
 	// Setup clickable regions
@@ -18,6 +19,7 @@ MainMenu::MenuResult MainMenu::show(sf::RenderWindow& window) {
 	menuButtonRect.setOutlineThickness(1.f);
 	menuButtonRect.setOutlineColor(sf::Color::White);
 
+	// Setup button texts
 	sf::Text playButtonText("Start", font);
 	playButtonText.setCharacterSize(40u);
 	playButtonText.setColor(sf::Color::White);
@@ -40,12 +42,14 @@ MainMenu::MenuResult MainMenu::show(sf::RenderWindow& window) {
 	menuButton.rect = menuButtonRect;
 	menuButton.action = MainMenu::MenuResult::Exit;
 
+	// Add the buttons
 	_menuItems.push_back(playButton);
 	_menuItems.push_back(menuButton);
 
 	return getMenuResponse(window);
 }
 
+// On click function to determine what button has been clicked and what action should be return
 MainMenu::MenuResult MainMenu::handleClick(int x, int y)
 {
 	std::list<MenuItem>::iterator it;
@@ -66,7 +70,10 @@ MainMenu::MenuResult MainMenu::getMenuResponse(sf::RenderWindow& window)
 	sf::Event menuEvent;
 	Player* player = dynamic_cast<Player*>(Game::getGameObjectManager().get("player"));
 
+	// While loop to wait till an action is returned from the menu
 	while (true) {
+
+		// Reset the delta time since the delta time would otherwise be way to high
 		Game::resetDeltaTime();
 		while(window.pollEvent(menuEvent))
 		{
@@ -82,10 +89,12 @@ MainMenu::MenuResult MainMenu::getMenuResponse(sf::RenderWindow& window)
 		window.clear(sf::Color::Black);
 
 		std::list<MenuItem>::iterator it;
-
+		
+		// Render background
 		Game::getGameObjectManager().get("background")->draw(window);
 		Game::getGameObjectManager().get("foreground")->draw(window);
 
+		// Render all buttons with highlight when mouse on hovering it
 		for (it = _menuItems.begin(); it != _menuItems.end(); it++)
 		{
 			if (it->rect.getGlobalBounds().contains(player->getPosition())) {
@@ -104,6 +113,7 @@ MainMenu::MenuResult MainMenu::getMenuResponse(sf::RenderWindow& window)
 			window.draw(it->text);
 		}
 
+		// Draw the mouse
 		player->draw(window);
 		window.display();
 

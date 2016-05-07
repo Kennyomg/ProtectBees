@@ -6,12 +6,11 @@ public:
 	GUI(std::string filename);
 	~GUI();
 
-	void update(float deltaTime);
+	void update(sf::Time deltaTime);
 	void draw(sf::RenderWindow& renderWindow);
 	
 	void addText(std::string name, sf::Text* text);
 	void removeText(std::string name);
-	void resetTime();
 
 	sf::Text* getText(std::string name);
 private:
@@ -19,7 +18,6 @@ private:
 
 	sf::Font _font;
 	bool _isLoaded;
-	float _elapsedTime;
 
 	struct TextDeallocator
 	{

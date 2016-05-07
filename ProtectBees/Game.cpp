@@ -52,7 +52,7 @@ void Game::start(void)
 	_gameState = Game::GameState::ShowingSplash;
 
 	/*
-	 * Creating clock and timer for calculating the delta time and frame per second
+	 * Creating clock and timer for calculating the delta time and frames per second
 	 */
 
 	float timer = 0;
@@ -121,24 +121,38 @@ sf::Time& Game::getDeltaTime()
 	return _deltaTime;
 }
 
+/*
+ * Reset deltaTime. This is a function because some blocking while loops in the menu's
+ */
 void Game::resetDeltaTime()
 {
 	_deltaTime = _clock.restart();
 }
 
+/*
+ * Getter for _level
+ */
 int Game::getLevel()
 {
 	return _level;
 }
 
+/*
+ * Setter for _level
+ */
 void Game::setLevel(int level)
 {
 	_level = level;
 }
 
+/*
+ * Reset level
+ */
 void Game::resetLevel()
 {
 	_gameObjectManager.remove("beekeeper");
+	
+	// Create new BeeKeeper and set hp
 	_gameObjectManager.add("beekeeper", new BeeKeeper((unsigned int)_level * (unsigned int)_level));
 	_gameObjectManager.clearBees();
 	_beeNameIndex = 0;
@@ -146,11 +160,17 @@ void Game::resetLevel()
 	Player* player = dynamic_cast<Player*>(_gameObjectManager.get("player"));
 }
 
+/*
+ * Getter for _gameState
+ */
 Game::GameState Game::getGameState()
 {
 	return _gameState;
 }
 
+/*
+ * Setter for _gameState
+ */
 void Game::setGameState(Game::GameState gameState)
 {
 	_gameState = gameState;
@@ -165,6 +185,7 @@ void Game::gameLoop()
 	sf::Event currentEvent;
 	Player* player = dynamic_cast<Player*>(_gameObjectManager.get("player"));
 
+	// Depending on the game state render the correct screen
 	switch (_gameState) {
 		case Game::GameState::ShowingMenu: {
 			showMenu();
@@ -185,6 +206,7 @@ void Game::gameLoop()
 			player->update(sf::seconds(0.0f));
 			_mainWindow.clear(sf::Color(0, 0, 0));
 
+			// Draw everything in the correct order
 			_gameObjectManager.get("background")->draw(_mainWindow);
 			_gameObjectManager.drawAllWorkerBees(_mainWindow);
 			_gameObjectManager.get("foreground")->draw(_mainWindow);
@@ -195,28 +217,37 @@ void Game::gameLoop()
 
 			_mainWindow.display();
 
+			// Poll the event and set gamestate to the correct state
 			while (_mainWindow.pollEvent(currentEvent))
 			{
 				if (currentEvent.type == sf::Event::KeyPressed) {
 					if (currentEvent.key.code == sf::Keyboard::Escape || currentEvent.key.code == sf::Keyboard::Space) {
+						// Unpause
 						_gameState = Game::GameState::Playing;
 					}
 				}
 
 				if (currentEvent.type == sf::Event::Closed) {
+					// Quit the game
 					_gameState = Game::GameState::Exiting;
 				}
 			}
 			break;
 		}
 		case Game::GameState::Playing: {
+			// Play music
 			_audioManager.play("playscene");
 
+			// Update all game objects
 			_gameObjectManager.updateAll();
-			_gui.update(_deltaTime.asSeconds());
 
+			// Update the graphical user interface
+			_gui.update(_deltaTime);
+
+			// Clear screen
 			_mainWindow.clear(sf::Color(0, 0, 0));
 
+			// Draw all game objects in this order into the screen buffer
 			_gameObjectManager.get("background")->draw(_mainWindow);
 			_gameObjectManager.drawAllWorkerBees(_mainWindow);
 			_gameObjectManager.get("foreground")->draw(_mainWindow);
@@ -225,29 +256,41 @@ void Game::gameLoop()
 			_gui.draw(_mainWindow);
 			player->draw(_mainWindow);
 
+			// Display the new screen buffer
 			_mainWindow.display();
+
+			// Check for events
 			while (_mainWindow.pollEvent(currentEvent))
 			{
 				if (currentEvent.type == sf::Event::KeyPressed) {
 					if (currentEvent.key.code == sf::Keyboard::Escape || currentEvent.key.code == sf::Keyboard::Space) {
+						// Pause music and open the pause screen
 						_audioManager.pause("playscene");
 						_gameState = Game::GameState::Paused;
 					}
 
+					// Set shiftKeyDown to set a multiplier
 					if (!_shiftKeyDown && currentEvent.key.code == sf::Keyboard::LShift)
 					{
 						_shiftKeyDown = true;
 						_multiplier *= 10u;
 					}
 
+					// Set ctrilKeyDown to set a multiplier
 					if (!_ctrlKeyDown && currentEvent.key.code == sf::Keyboard::LControl)
 					{
 						_ctrlKeyDown = true;
 						_multiplier *= 100u;
 					}
 
-					if (((unsigned int)_gameObjectManager.getSoldierBeeCount() + (unsigned int)_gameObjectManager.getWorkerBeeCount()) + (1u * _multiplier) <= player->getAvailableBees())
+					// Check if the player has any bees available
+					if (
+						((unsigned int)_gameObjectManager.getSoldierBeeCount() + 
+						(unsigned int)_gameObjectManager.getWorkerBeeCount()) + 
+						(1u * _multiplier) <= player->getAvailableBees()
+					)
 					{
+						// Check if the player has enough score/honey to buy a workerbee. _multiplier is used to buy multiple bees at a time
 						if (currentEvent.key.code == sf::Keyboard::W && player->getScore() >= 10u * _multiplier) {
 							for (unsigned int i = 0; i < _multiplier; i++)
 							{
@@ -255,7 +298,7 @@ void Game::gameLoop()
 							}
 							player->subtractScore(10u * _multiplier);
 						}
-
+						// Check if the player has enough score/honey to buy a soldierbee. _multiplier is used to buy multiple bees at a time
 						if (currentEvent.key.code == sf::Keyboard::S && player->getScore() >= 30u * _multiplier) {
 							for (unsigned int i = 0; i < _multiplier; i++)
 							{
@@ -268,6 +311,7 @@ void Game::gameLoop()
 
 				if (currentEvent.type == sf::Event::KeyReleased)
 				{
+					// On release set the keyDown booleans to false and divide the multiplier again
 					if (currentEvent.key.code == sf::Keyboard::LShift && _shiftKeyDown)
 					{
 						_shiftKeyDown = false;
@@ -281,6 +325,7 @@ void Game::gameLoop()
 					}
 				}
 
+				// Exit on close event
 				if (currentEvent.type == sf::Event::Closed) {
 					_gameState = Game::GameState::Exiting;
 				}
@@ -291,16 +336,18 @@ void Game::gameLoop()
 	}
 }
 
+// Create and show splashScreen
 void Game::showSplashScreen()
 {
 	SplashScreen splashScreen;
 	splashScreen.show(_mainWindow);
-	_gameState = Game::GameState::ShowingMenu;
 }
 
+// Create and show scoreScreen
 void Game::showScoreScreen()
 {
 	ScoreScreen scoreScreen;
+	// This function is blocking and will wait for a result
 	ScoreScreen::MenuResult result = scoreScreen.show(_mainWindow);
 	switch (result)
 	{
@@ -308,6 +355,7 @@ void Game::showScoreScreen()
 		_gameState = Game::GameState::ShowingMenu;
 		break;
 	case ScoreScreen::MenuResult::Play:
+		// Increase the level and reset the objects
 		_level++;
 		resetLevel();
 		_gameState = Game::GameState::Playing;
@@ -318,6 +366,7 @@ void Game::showScoreScreen()
 void Game::showMenu()
 {
 	MainMenu mainMenu;
+	// This function is blocking and will wait for a result
 	MainMenu::MenuResult result = mainMenu.show(_mainWindow);
 	switch (result)
 	{
@@ -325,6 +374,7 @@ void Game::showMenu()
 		_gameState = Game::GameState::Exiting;
 		break;
 	case MainMenu::MenuResult::Play:
+		// Set the player stats to default and reset the level
 		Player* player = dynamic_cast<Player*>(_gameObjectManager.get("player"));
 		_level = 1;
 		resetLevel();
@@ -335,6 +385,7 @@ void Game::showMenu()
 	}
 }
 
+// Initialization of static class can't be done in a constructor since there will never be an instance
 Game::GameState Game::_gameState = Game::GameState::Uninitialized;
 sf::RenderWindow Game::_mainWindow;
 sf::Time Game::_deltaTime;

@@ -17,8 +17,10 @@ BeeKeeper::~BeeKeeper()
 
 void BeeKeeper::update(sf::Time deltaTime)
 {
+	// Check if the gamestate is playing, so the beekeeper wont walk when the game is paused
 	if (Game::getGameState() == Game::GameState::Playing)
 	{
+		// If dead, turnaround and run away beer!
 		if (_isDead)
 		{
 			if (getSprite().getPosition().x >= Game::SCREEN_WIDTH) {
@@ -30,18 +32,20 @@ void BeeKeeper::update(sf::Time deltaTime)
 		{
 			Game::setGameState(Game::GameState::ShowingMenu);
 		}
-		else if (_nearbySoldierBees.size() == 0)
+		else if (_nearbySoldierBees.size() == 0) // Only move when there are no bees around
 		{
 			getSprite().move(-_speed * deltaTime.asSeconds(), 0.0f);
 		}
 	}
 }
 
+// Get hp
 unsigned int BeeKeeper::getHp() const
 {
 	return _hp;
 }
 
+// Add soldierbee to list of nearby bees
 void BeeKeeper::addSoldier(std::string name)
 {
 	if (_nearbySoldierBees.find(name) == _nearbySoldierBees.end()) {
@@ -49,11 +53,13 @@ void BeeKeeper::addSoldier(std::string name)
 	}
 }
 
+// Remove bee from list
 void BeeKeeper::removeSoldier(std::string name)
 {
 	_nearbySoldierBees.erase(name);
 }
 
+// Function for getting hit
 void BeeKeeper::hit(unsigned int damage)
 {
 	if (damage >= _hp) {
@@ -69,6 +75,7 @@ void BeeKeeper::hit(unsigned int damage)
 	}
 }
 
+// When the beekeeper is dead, show score screen
 void BeeKeeper::die()
 {
 	Game::setGameState(Game::GameState::ShowingScore);

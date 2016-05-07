@@ -10,7 +10,8 @@ void SplashScreen::show(sf::RenderWindow& window)
 		Game::resetDeltaTime();
 		while (window.pollEvent(event))
 		{
-			if (event.type == sf::Event::EventType::KeyPressed || event.type == sf::Event::EventType::MouseButtonPressed || event.type == sf::Event::EventType::Closed) {
+			if (event.type == sf::Event::EventType::KeyPressed || event.type == sf::Event::EventType::MouseButtonPressed) {
+				Game::setGameState(Game::GameState::ShowingMenu);
 				return;
 			}
 
@@ -22,9 +23,13 @@ void SplashScreen::show(sf::RenderWindow& window)
 
 
 		window.clear(sf::Color::White);
+
+		// Draw splashscreen image
 		Game::getGameObjectManager().get("splashscreen")->draw(window);
 		Player* player = dynamic_cast<Player*>(Game::getGameObjectManager().get("player"));
 		player->update(sf::seconds(0.0f));
+		
+		// Draw mouse
 		player->draw(window);
 		window.display();
 	}

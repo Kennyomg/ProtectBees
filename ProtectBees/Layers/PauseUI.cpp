@@ -7,6 +7,8 @@ PauseUI::PauseUI(std::string filepath)
 {
 	if (_font.loadFromFile(filepath))
 	{
+		// Tutorial text. I don't like the lack of support for multi line string,
+		// but I think it should be readable like this
 		sf::Text* t1 = new sf::Text("\
 Hello, welcome to my game!\n\
 Before we start I'll explain the game.\n\n\
@@ -37,6 +39,7 @@ Press S to buy a Soldier Bee for 30 honey\
 	}
 }
 
+// Delete texts
 PauseUI::~PauseUI()
 {
 	std::for_each(_texts.begin(), _texts.end(), TextDeallocator());
@@ -46,6 +49,7 @@ void PauseUI::update(sf::Time& deltaTime)
 {
 }
 
+// Draw PauseUI
 void PauseUI::draw(sf::RenderWindow& window)
 {
 	window.draw(_overlay);

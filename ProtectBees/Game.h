@@ -54,27 +54,72 @@ public:
 	static void resetDeltaTime();
 
 	/*
-	 *
+	 * Get current level
 	 */
 	static int getLevel();
+
+	/*
+	 * Set level
+	 */
 	static void setLevel(int level);
+
+	/*
+	 * Get current gamestate
+	 */
 	static GameState getGameState();
+
+	/*
+	 * Set gamestate
+	 */
 	static void setGameState(GameState gameState);
+
+	/*
+	 * Reset gameobject in the level to default
+	 */
 	static void resetLevel();
+
+	/*
+	 * Define screen width and height
+	 */
 	const static int SCREEN_WIDTH = 800;
 	const static int SCREEN_HEIGHT = 450;
 
 private:
+	
+	/*
+	 * Function for exiting the game
+	 */
 	static bool isExiting();
+
+	/*
+	 * Main game loop
+	 */
 	static void gameLoop();
 
+	/*
+	 * Show splash screen
+	 */
 	static void showSplashScreen();
+	
+	/*
+	 * Show score screen
+	 */
 	static void showScoreScreen();
+	
+	/*
+	 * Show main menu screen
+	 */
 	static void showMenu();
 
+	/*
+	 * Define clocks for fps and deltaTime
+	 */
 	static sf::Clock _clock;
 	static sf::Clock _time;
 
+	/*
+	 * Define properties
+	 */
 	static GameState _gameState;
 	static sf::RenderWindow _mainWindow;
 	static sf::Time _deltaTime;

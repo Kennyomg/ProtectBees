@@ -15,6 +15,7 @@ private:
 	bool _isLoaded;
 	sf::RectangleShape _overlay;
 
+	// Deallocator function for deleting texts (I like this snippet)
 	struct TextDeallocator
 	{
 		void operator()(const std::pair<std::string, sf::Text* > & p) const {

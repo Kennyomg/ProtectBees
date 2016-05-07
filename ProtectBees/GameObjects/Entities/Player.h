@@ -1,6 +1,7 @@
 #pragma once
 #include "../VisibleGameObject.h"
 
+// The player class holds all the stats of the player and draws the mouse
 class Player : public VisibleGameObject
 {
 public:

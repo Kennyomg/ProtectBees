@@ -31,6 +31,7 @@ void AudioObject::setVolume(float volume) {
 }
 
 void AudioObject::play() {
+	// Only play when it's not playing
 	if (_status != AudioObject::Status::Playing) {
 		_sound.play();
 		_status = AudioObject::Status::Playing;
@@ -38,6 +39,7 @@ void AudioObject::play() {
 }
 
 void AudioObject::pause() {
+	// Only pause when it's actually playing
 	if (_status == AudioObject::Status::Playing) {
 		_sound.pause();
 		_status = AudioObject::Status::Paused;
@@ -45,7 +47,8 @@ void AudioObject::pause() {
 }
 
 void AudioObject::stop() {
-	if (_status == AudioObject::Status::Playing) {
+	// Only stop when it's actually playing or paused
+	if (_status == AudioObject::Status::Playing || _status == AudioObject::Status::Paused) {
 		_sound.stop();
 		_status = AudioObject::Status::Stopped;
 	}

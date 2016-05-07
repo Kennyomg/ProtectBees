@@ -1,9 +1,11 @@
 #pragma once
 
+// This class is intended for extending but can also be used for game objects
 class VisibleGameObject
 {
 public:
 	VisibleGameObject();
+	// Overload for the constructor. Argument is the file path for a image
 	VisibleGameObject(std::string filename);
 	virtual ~VisibleGameObject();
 

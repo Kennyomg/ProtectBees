@@ -15,9 +15,6 @@ public:
 	void pause(std::string name);
 	void stop(std::string name);
 
-	void pauseAll();
-	void resumeAll();
-
 private:
 	std::map<std::string, AudioObject*> _audioObjects;
 

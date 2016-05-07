@@ -6,8 +6,10 @@
 class MainMenu
 {
 public:
+	// All actions that can be returned from the menu
 	enum MenuResult { Nothing, Exit, Play };
 
+	// Define MenuItem/button struct
 	struct MenuItem
 	{
 	public:
@@ -16,6 +18,7 @@ public:
 		MenuResult action;
 	};
 
+	// Show function
 	MenuResult show(sf::RenderWindow& window);
 
 private:

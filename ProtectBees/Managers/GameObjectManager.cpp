@@ -4,34 +4,38 @@
 
 GameObjectManager::GameObjectManager()
 {
-
 }
 
 GameObjectManager::~GameObjectManager()
 {
+	// Delete all gameobjects when manager is deconstructed
 	std::for_each(_gameObjects.begin(), _gameObjects.end(), GameObjectDeallocator());
 	std::for_each(_workerBeeObjects.begin(), _workerBeeObjects.end(), WorkerBeeDeallocator());
 	std::for_each(_soldierBeeObjects.begin(), _soldierBeeObjects.end(), SoldierBeeDeallocator());
 }
 
+// Add game object
 void GameObjectManager::add(std::string name, VisibleGameObject* gameObject)
 {
 	gameObject->setName(name);
 	_gameObjects.insert(std::pair<std::string, VisibleGameObject*>(name, gameObject));
 }
 
+// Add workerbee
 void GameObjectManager::add(std::string name, WorkerBee* gameObject)
 {
 	gameObject->setName(name);
 	_workerBeeObjects.insert(std::pair<std::string, WorkerBee*>(name, gameObject));
 }
 
+// Add soldierbee
 void GameObjectManager::add(std::string name, SoldierBee* gameObject)
 {
 	gameObject->setName(name);
 	_soldierBeeObjects.insert(std::pair<std::string, SoldierBee*>(name, gameObject));
 }
 
+// Remove game object
 void GameObjectManager::remove(std::string name)
 {
 	std::map<std::string, VisibleGameObject*>::iterator results = _gameObjects.find(name);
@@ -41,6 +45,7 @@ void GameObjectManager::remove(std::string name)
 	}
 }
 
+// Remove workerbee
 void GameObjectManager::removeWorkerBee(std::string name)
 {
 	std::map<std::string, WorkerBee*>::iterator results = _workerBeeObjects.find(name);
@@ -50,6 +55,7 @@ void GameObjectManager::removeWorkerBee(std::string name)
 	}
 }
 
+// Remove soldierbee
 void GameObjectManager::removeSoldierBee(std::string name)
 {
 	std::map<std::string, SoldierBee*>::iterator results = _soldierBeeObjects.find(name);
@@ -59,6 +65,7 @@ void GameObjectManager::removeSoldierBee(std::string name)
 	}
 }
 
+// Get game object
 VisibleGameObject* GameObjectManager::get(std::string name) const
 {
 	std::map<std::string, VisibleGameObject*>::const_iterator results = _gameObjects.find(name);
@@ -68,6 +75,7 @@ VisibleGameObject* GameObjectManager::get(std::string name) const
 	return results->second;
 }
 
+// Delete all bees
 void GameObjectManager::clearBees()
 {
 	std::map<std::string, WorkerBee*>::const_iterator workerItr = _workerBeeObjects.begin();
@@ -87,21 +95,25 @@ void GameObjectManager::clearBees()
 	}
 }
 
+// Get object count
 int GameObjectManager::getObjectCount() const
 {
 	return _gameObjects.size();
 }
 
+// Get workerbee count
 int GameObjectManager::getWorkerBeeCount() const
 {
 	return _workerBeeObjects.size();
 }
 
+// Get soldierbee count
 int GameObjectManager::getSoldierBeeCount() const
 {
 	return _soldierBeeObjects.size();
 }
 
+// Draw all game object -- currently not used since I needed more control on the render order
 void GameObjectManager::drawAll(sf::RenderWindow& renderWindow)
 {
 	std::map<std::string, VisibleGameObject*>::const_iterator itr = _gameObjects.begin();
@@ -112,6 +124,7 @@ void GameObjectManager::drawAll(sf::RenderWindow& renderWindow)
 	}
 }
 
+// Draw all workerbees
 void GameObjectManager::drawAllWorkerBees(sf::RenderWindow& renderWindow)
 {
 	std::map<std::string, WorkerBee*>::const_iterator itr = _workerBeeObjects.begin();
@@ -122,6 +135,7 @@ void GameObjectManager::drawAllWorkerBees(sf::RenderWindow& renderWindow)
 	}
 }
 
+// Draw all soldierbees
 void GameObjectManager::drawAllSoldierBees(sf::RenderWindow& renderWindow)
 {
 	std::map<std::string, SoldierBee*>::const_iterator itr = _soldierBeeObjects.begin();
@@ -132,6 +146,7 @@ void GameObjectManager::drawAllSoldierBees(sf::RenderWindow& renderWindow)
 	}
 }
 
+// Update all game objects
 void GameObjectManager::updateAll()
 {
 	sf::Time timeDelta = Game::getDeltaTime();
@@ -152,6 +167,8 @@ void GameObjectManager::updateAll()
 	std::map<std::string, SoldierBee*>::const_iterator soldierItrEnd = _soldierBeeObjects.end();
 
 	for (; soldierItr != soldierItrEnd; ) {
+		
+		// If the soldierbee is dead delete it
 		if (soldierItr->second->isDead())
 		{
 			delete soldierItr->second;

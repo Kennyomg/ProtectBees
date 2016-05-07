@@ -3,6 +3,8 @@
 #include "SFML/Graphics.hpp"
 #include <vector>
 
+// Extending Drawable and Transformable makes it so you can create an entity sfml like
+// Could've used it for all the other entities, but didn't have time to refactor
 class ParticleSystem : public sf::Drawable, public sf::Transformable
 {
 public:

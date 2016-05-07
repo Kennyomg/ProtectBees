@@ -4,11 +4,11 @@
 #include "../GameObjects/Entities/Player.h"
 
 GUI::GUI(std::string filename)
-	: _elapsedTime(0.0f)
 {
+	// Load font, returns true if loaded correctly
 	if (_font.loadFromFile(filename))
 	{
-
+		// Setup GUI texts
 		sf::Color darkBlue(100, 0, 160);
 
 		sf::Text* score = new sf::Text();
@@ -51,16 +51,19 @@ GUI::GUI(std::string filename)
 	}
 }
 
+// Delete all texts when GUI is deconstructed
 GUI::~GUI()
 {
 	std::for_each(_texts.begin(), _texts.end(), TextDeallocator());
 }
 
+// Add text
 void GUI::addText(std::string name, sf::Text* text)
 {
 	_texts.insert(std::pair<std::string, sf::Text*>(name, text));
 }
 
+// Remove text
 void GUI::removeText(std::string name)
 {
 	std::map<std::string, sf::Text*>::iterator results = _texts.find(name);
@@ -70,6 +73,7 @@ void GUI::removeText(std::string name)
 	}
 }
 
+// Get text
 sf::Text* GUI::getText(std::string name)
 {
 	std::map<std::string, sf::Text*>::iterator results = _texts.find(name);
@@ -80,11 +84,7 @@ sf::Text* GUI::getText(std::string name)
 
 }
 
-void GUI::resetTime()
-{
-	_elapsedTime = 0.0f;
-}
-
+// Draw GUI
 void GUI::draw(sf::RenderWindow& window)
 {
 	std::map<std::string, sf::Text*>::iterator itr = _texts.begin();
@@ -95,9 +95,9 @@ void GUI::draw(sf::RenderWindow& window)
 	}
 }
 
-void GUI::update(float deltaTime)
+// Update GUI
+void GUI::update(sf::Time deltaTime)
 {
-	_elapsedTime += deltaTime;
 	getText("score")->setString(std::to_string(dynamic_cast<Player*>(Game::getGameObjectManager().get("player"))->getScore()));
 	getText("availablebees")->setString("Hive size: " + std::to_string(dynamic_cast<Player*>(Game::getGameObjectManager().get("player"))->getAvailableBees()));
 	getText("workerbees")->setString("# of Worker bees: " + std::to_string(Game::getGameObjectManager().getWorkerBeeCount()));

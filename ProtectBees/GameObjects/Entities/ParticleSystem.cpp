@@ -15,19 +15,19 @@ void ParticleSystem::update(sf::Time elapsed)
 {
 	for (std::size_t i = 0; i < _particles.size(); ++i)
 	{
-		// update the particle lifetime
+		// Update the particle lifetime
 		Particle& p = _particles[i];
 		p.lifetime -= elapsed;
 
-		// if the particle is dead, respawn it
+		// If the particle is dead, respawn it
 		if (p.lifetime <= sf::Time::Zero) {
 			resetParticle(i);
 		}
 
-		// update the position of the corresponding vertex
+		// Update the position of the corresponding vertex
 		_vertices[i].position += p.velocity * elapsed.asSeconds();
 
-		// update the alpha (transparency) of the particle according to its lifetime
+		// Update the alpha (transparency) of the particle according to its lifetime
 		float ratio = p.lifetime.asSeconds() / _lifetime.asSeconds();
 		_vertices[i].color.r = static_cast<sf::Uint8>(231);
 		_vertices[i].color.g = static_cast<sf::Uint8>(133);
@@ -38,19 +38,19 @@ void ParticleSystem::update(sf::Time elapsed)
 
 void ParticleSystem::draw(sf::RenderTarget& target, sf::RenderStates states) const
 {
-	// apply the transform
+	// Apply the transform
 	states.transform *= getTransform();
 
-	// our particles don't use a texture
+	// Our particles don't use a texture
 	states.texture = NULL;
 
-	// draw the vertex array
+	// Draw the vertex array
 	target.draw(_vertices, states);
 }
 
 void ParticleSystem::resetParticle(std::size_t index)
 {
-	// give a random velocity and lifetime to the particle
+	// Give a random velocity and lifetime to the particle
 	float angle = (std::rand() % 90) * 3.14f / 90.0f;
 	float speed = (std::rand() % 30) + 1.0f;
 	_particles[index].velocity = sf::Vector2f(std::cos(angle) * speed, std::sin(angle) * speed);

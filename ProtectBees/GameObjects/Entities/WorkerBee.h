@@ -1,6 +1,7 @@
 #pragma once
 #include "../VisibleGameObject.h"
 
+// Extend VisibleGameObject
 class WorkerBee : public VisibleGameObject
 {
 public:
